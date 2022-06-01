@@ -13,6 +13,7 @@ type Video struct {
 	FavoriteCount int64  `json:"favorite_count,omitempty"`
 	CommentCount  int64  `json:"comment_count,omitempty"`
 	IsFavorite    bool   `json:"is_favorite,omitempty"`
+	Title         string `json:"title"`
 }
 
 type Comment struct {
@@ -23,7 +24,7 @@ type Comment struct {
 }
 
 type User struct {
-	Id            int64  `json:"id,omitempty"`
+	Id            int64  `json:"id,omitempty" gorm:"column:user_id" `
 	Name          string `json:"name,omitempty"`
 	FollowCount   int64  `json:"follow_count,omitempty"`
 	FollowerCount int64  `json:"follower_count,omitempty"`
