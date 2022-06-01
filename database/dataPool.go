@@ -1,14 +1,15 @@
 package database
 
 import (
-	"douyin/config"
+	"douyin/global"
+	"log"
+	"time"
+
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"log"
-	"time"
 )
 
 var db *gorm.DB
@@ -47,11 +48,11 @@ func GetRedisConnect() *redis.Client {
 	if rdb != nil {
 		return rdb
 	}
-	log.Printf("Redis连接地址%s", config.AppConfig.Get("redis.host"))
+	log.Printf("Redis连接地址%s", global.RedisSetting.Url)
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     config.AppConfig.GetString("redis.url"),
-		Password: config.AppConfig.GetString("redis.password"),
-		DB:       config.AppConfig.GetInt("redis.database"),
+		Addr:     global.RedisSetting.Url,
+		Password: global.RedisSetting.Password,
+		DB:       global.RedisSetting.Database,
 	})
 	return rdb
 }

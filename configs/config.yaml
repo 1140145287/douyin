@@ -1,0 +1,29 @@
+#mysql连接配置
+mysql:
+  DBType: mysql
+  Username: douyin  # 填写你的数据库账号
+  Password: abc123456+  # 填写你的数据库密码
+  Host: 81.68.239.206:3306
+  DBName: douyin
+  TablePrefix: dy_
+  Charset: utf8
+  ParseTime: True
+  MaxIdleConns: 10
+  MaxOpenConns: 30
+
+#redis配置
+redis:
+  url: 81.68.239.206:6379
+  password: tanyongfeng13666
+  database: 1  # using database 2
+
+#gin配置
+server:
+  port: 8080
+  runMode: debug
+  ReadTimeout: 60
+  WriteTimeout: 60
+
+
+
+
