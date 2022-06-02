@@ -19,11 +19,19 @@ redis:
 
 #gin配置
 server:
-  port: 8080
   runMode: debug
+  port: 8080
   ReadTimeout: 60
   WriteTimeout: 60
-
+  
+#log日志的配置
+log:
+  level: debug
+  log_path: storage/logs
+  filename: douyin.log
+  max_size: 200 #最大文件大小
+  max_age : 60  #存放时间
+  max_backups: 5 #最大的备份数
 
 
 

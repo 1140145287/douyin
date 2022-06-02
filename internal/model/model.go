@@ -40,7 +40,6 @@ func NewMysqlEngine(MysqlSetting *setting.MysqlSettingS) (*gorm.DB, error) {
 	}
 	sqlDB.SetMaxIdleConns(MysqlSetting.MaxIdleConns)
 	sqlDB.SetMaxOpenConns(MysqlSetting.MaxOpenConns)
-	return db, nil
 	sqlDB.SetConnMaxLifetime(time.Hour)
 	//空闲连接池
 	return db, nil

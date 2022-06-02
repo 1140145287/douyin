@@ -3,10 +3,10 @@ package setting
 import "time"
 
 type ServerSettingS struct {
-	RunMode      string
-	HttpPort     string
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
+	RunMode      string        `mapstructure:"runMode"`
+	HttpPort     string        `mapstructure:"port"`
+	ReadTimeout  time.Duration `mapstructure:"ReadTimeout"`
+	WriteTimeout time.Duration `mapstructure:"WriteTimeout"`
 }
 
 type RedisSettingS struct {
@@ -26,6 +26,14 @@ type MysqlSettingS struct {
 	ParseTime    bool
 	MaxIdleConns int
 	MaxOpenConns int
+}
+type LoggerSettingS struct {
+	LogLevel      string `mapstructure:"level"`
+	LogSavePath   string `mapstructure:"log_path"`
+	LogFileName   string `mapstructure:"filename"`
+	MaxPageSize   int    `mapstructure:"max_size"`
+	MaxPageAge    int    `mapstructure:"max_age"`
+	LogMaxBackups int    `mapstructure:"max_backups"`
 }
 
 func (s *Setting) ReadSection(k string, v interface{}) error {

@@ -3,7 +3,9 @@ package main
 import (
 	"douyin/global"
 	"douyin/internal/model"
+	"douyin/pkg/logger"
 	"douyin/pkg/setting"
+	"fmt"
 	"log"
 	"time"
 )
@@ -21,15 +23,20 @@ func init() {
 	if err != nil {
 		log.Fatalf("init.setupRedisEngine err: %v", err)
 	}
+	err = setupLogger()
+	if err != nil {
+		log.Fatalf("init.setupLogger err: %v", err)
+	}
 }
 
 func main() {
 	//r := gin.Default()
 	//initRouter(r)
 	//r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
-	//fmt.Println(global.RedisSetting)
-	//fmt.Println(global.ServerSetting)
-	//fmt.Println(global.MysqlSetting)
+	fmt.Println(global.RedisSetting)
+	fmt.Println(global.ServerSetting)
+	fmt.Println(global.MysqlSetting)
+	fmt.Println(global.LoggerSetting)
 }
 
 //初始化数据库配置
@@ -51,6 +58,14 @@ func setupRedisEngine() error {
 	}
 	return nil
 }
+func setupLogger() error {
+	var err error
+	global.Logger, err = logger.NewLogger(global.LoggerSetting, global.ServerSetting.RunMode)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 //初始化环境配置
 func setupSetting() error {
@@ -67,6 +82,10 @@ func setupSetting() error {
 		return err
 	}
 	err = setting.ReadSection("mysql", &global.MysqlSetting)
+	if err != nil {
+		return err
+	}
+	err = setting.ReadSection("log", &global.LoggerSetting)
 	if err != nil {
 		return err
 	}
