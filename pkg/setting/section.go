@@ -4,7 +4,7 @@ import "time"
 
 type ServerSettingS struct {
 	RunMode      string        `mapstructure:"runMode"`
-	HttpPort     string        `mapstructure:"port"`
+	HttpPort     int           `mapstructure:"port"`
 	ReadTimeout  time.Duration `mapstructure:"ReadTimeout"`
 	WriteTimeout time.Duration `mapstructure:"WriteTimeout"`
 }

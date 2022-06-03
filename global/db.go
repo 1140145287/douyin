@@ -6,6 +6,6 @@ import (
 )
 
 var (
-	DBEngine    *gorm.DB
+	MysqlEngine *gorm.DB
 	RedisEngine *redis.Client
 )

@@ -1,10 +1,11 @@
 package main
 
 import (
+	"douyin/dao"
 	"douyin/global"
-	"douyin/internal/model"
 	"douyin/pkg/logger"
 	"douyin/pkg/setting"
+	"douyin/router"
 	"fmt"
 	"log"
 	"time"
@@ -30,19 +31,29 @@ func init() {
 }
 
 func main() {
-	//r := gin.Default()
-	//initRouter(r)
-	//r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r := router.NewRouter()
 	fmt.Println(global.RedisSetting)
 	fmt.Println(global.ServerSetting)
 	fmt.Println(global.MysqlSetting)
 	fmt.Println(global.LoggerSetting)
+	err := r.Run(fmt.Sprintf(":%d", global.ServerSetting.HttpPort))
+	if err != nil {
+		fmt.Printf("run server failed, err:%v\n", err)
+		return
+	}
+	// s := &http.Server{
+	// 	Addr:         global.ServerSetting.HttpPort,
+	// 	Handler:      router,
+	// 	ReadTimeout:  10 * global.ServerSetting.ReadTimeout,
+	// 	WriteTimeout: 10 * global.ServerSetting.WriteTimeout,
+	// }
+	// s.ListenAndServe()
 }
 
 //初始化数据库配置
 func setupMysqlEngine() error {
 	var err error
-	global.DBEngine, err = model.NewMysqlEngine(global.MysqlSetting)
+	global.MysqlEngine, err = dao.NewMysqlEngine(global.MysqlSetting)
 	if err != nil {
 		return err
 	}
@@ -52,12 +63,14 @@ func setupMysqlEngine() error {
 //初始化redis配置
 func setupRedisEngine() error {
 	var err error
-	global.RedisEngine, err = model.NewRedisEngine(global.RedisSetting)
+	global.RedisEngine, err = dao.NewRedisEngine(global.RedisSetting)
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
+//初始化日志配置
 func setupLogger() error {
 	var err error
 	global.Logger, err = logger.NewLogger(global.LoggerSetting, global.ServerSetting.RunMode)
