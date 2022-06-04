@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"douyin/models"
 	"douyin/pkg/jwt"
 	"fmt"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 
 type VideoListResponse struct {
 	Response
-	VideoList []Video `json:"video_list"`
+	VideoList []models.Video `json:"video_list"`
 }
 
 // Publish check token then save upload file to public directory

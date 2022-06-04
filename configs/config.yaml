@@ -18,7 +18,7 @@ mysql:
 redis:
   url: 81.68.239.206:6379
   password: tanyongfeng13666
-  database: 1  # using database 2
+  database: 1  # using database 1
 
 #gin配置
 server:
