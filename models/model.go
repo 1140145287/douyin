@@ -1,10 +1,9 @@
-package model
+package models
 
 import (
 	"douyin/global"
 	"douyin/pkg/setting"
 	"fmt"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
@@ -40,7 +39,6 @@ func NewMysqlEngine(MysqlSetting *setting.MysqlSettingS) (*gorm.DB, error) {
 	}
 	sqlDB.SetMaxIdleConns(MysqlSetting.MaxIdleConns)
 	sqlDB.SetMaxOpenConns(MysqlSetting.MaxOpenConns)
-	sqlDB.SetConnMaxLifetime(time.Hour)
 	//空闲连接池
 	return db, nil
 }
