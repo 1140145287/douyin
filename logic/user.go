@@ -49,6 +49,7 @@ func Login(p *models.ParamLogin) (*models.User, error) {
 }
 
 //UserInfo 存放用户信息的代码
-func UserInfo(id int64) (*models.User, error) {
-	return dao.GetUserByID(id)
+func UserInfo(param *models.ParamInfo) (*models.User, error) {
+	//1、判断用户信息，并返回用户的基本信息
+	return dao.GetUserByID(param.Uid)
 }

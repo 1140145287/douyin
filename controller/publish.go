@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"douyin/pkg/jwt"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
 )
 
 type VideoListResponse struct {
@@ -50,6 +52,18 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+	//1、参数校验
+	token := c.PostForm("token")
+	mc, err := jwt.ParseToken(token)
+	fmt.Println(mc)
+	if err != nil {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeInvalidAuth]},
+		})
+	}
+	//2、业务逻辑处理
+	// err := logic.GetPublishList(mc.Id)
+
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,

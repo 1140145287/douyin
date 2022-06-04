@@ -36,7 +36,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User *models.User `json:"user"`
+	User User `json:"user"`
 }
 
 func Register(c *gin.Context) {
@@ -126,12 +126,12 @@ func Login(c *gin.Context) {
 		_, ok := err.(validator.ValidationErrors)
 		if !ok {
 			// 非validator.ValidationErrors类型错误直接返回
-			global.Logger.Error("Register with client problems", zap.Error((err)))
+			global.Logger.Error("Login with client problems", zap.Error((err)))
 			c.JSON(http.StatusOK, UserLoginResponse{
 				Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeServerBusy]},
 			})
 		}
-		global.Logger.Error("Register with invalid param", zap.Error((err)))
+		global.Logger.Error("Login with invalid param", zap.Error((err)))
 		if errors.Is(err, dao.ErrorUserExit) {
 			c.JSON(http.StatusOK, UserLoginResponse{
 				Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeInvalidParam]},
@@ -174,23 +174,55 @@ func UserInfo(c *gin.Context) {
 	// 	})
 	// }
 	//1、参数校验
-	token := c.Query("token")
-	mc, err := jwt.ParseToken(token)
+	p := new(models.ParamInfo)
+	if err := c.ShouldBindQuery(p); err != nil {
+		//请求参数有误
+		_, ok := err.(validator.ValidationErrors)
+		if !ok {
+			// 非validator.ValidationErrors类型错误直接返回
+			global.Logger.Error("UserInfo with client problems", zap.Error((err)))
+			c.JSON(http.StatusOK, UserLoginResponse{
+				Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeServerBusy]},
+			})
+		}
+		global.Logger.Error("UserInfo with invalid param", zap.Error((err)))
+		return
+	}
+	mc, err := jwt.ParseToken(p.Token)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeInvalidAuth]},
 		})
 	}
+	//Token是否有效只要判断token解析的id和用户id是否一致
+	if mc.UserID != p.Uid {
+		global.Logger.Error("invalid param! the token failed! ere", zap.Error((err)))
+		if errors.Is(err, dao.ErrorUserExit) {
+			c.JSON(http.StatusOK, UserLoginResponse{
+				Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeInvalidParam]},
+			})
+		}
+		return
+	}
 	//2、业务逻辑处理
-	user, err := logic.UserInfo(mc.UserID)
-	if err != nil {
+	user, err := logic.UserInfo(p)
+	if errors.Is(err, dao.ErrorInvalidID) {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: CodeMap[CodeUserNotExit]},
 		})
 	}
+	//这里需要做一下区分，因为直接返回model下的用户信息，会把密码啥的也泄露掉
+	userInfo := &User{
+		Id:            user.Id,
+		Name:          user.Name,
+		FollowCount:   user.FollowCount,
+		FollowerCount: user.FollowerCount,
+		IsFollow:      user.IsFollow,
+	}
+	//3、返回响应
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0},
-		User:     user,
+		User:     *userInfo,
 	})
 
 }
