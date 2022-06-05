@@ -27,7 +27,7 @@ type ParamFavoriteAction struct {
 // ParamFavoriteList  用户获取点赞请求列表
 type ParamFavoriteList struct {
 	Token  string `form:"token" json:"token" binding:"required"`
-	UserId int64  `form:"user_id" json:"user_id" binding:"required"`
+	UserId int64  `form:"user_id" json:"user_id"`
 }
 
 // ParamCommentAction 用户获取评论请求列表

@@ -2,7 +2,7 @@ package router
 
 import (
 	"douyin/controller"
-	"douyin/handler"
+	"douyin/pkg/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func NewRouter() *gin.Engine {
 	apiRouter.POST("/user/login/", controller.Login)
 
 	//注册鉴权路由器
-	apiRouter.Use(handler.AuthHandler())
+	apiRouter.Use(middleware.AuthHandler())
 	apiRouter.GET("/user/", controller.UserInfo)
 	apiRouter.POST("/publish/action/", controller.Publish)
 	apiRouter.GET("/publish/list/", controller.PublishList)

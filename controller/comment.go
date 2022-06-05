@@ -19,7 +19,7 @@ type CommentActionResponse struct {
 	Comment models.Comment `json:"comment,omitempty"`
 }
 
-// CommentAction no practical effect, just check if token is valid
+// CommentAction insert or update or delete comment
 func CommentAction(c *gin.Context) {
 	param := new(models.ParamCommentAction)
 	user, _ := c.Get("auth")
@@ -34,7 +34,10 @@ func CommentAction(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, CommentActionResponse{
-		Response: Response{StatusCode: 0},
+		Response: Response{
+			StatusCode: 0,
+			StatusMsg:  "评论成功！",
+		},
 		Comment: models.Comment{
 			Id:         comment.Id,
 			User:       user.(models.User),
@@ -51,13 +54,13 @@ func CommentList(c *gin.Context) {
 	comments, err := logic.GetCommentList(param)
 	if err != nil {
 		global.Logger.Error("Can't get comments ", zap.Error(err))
-		c.JSON(http.StatusOK, Response{
-			StatusCode: 500,
-			StatusMsg:  CodeInternalError.Msg(),
-		})
+		c.JSON(http.StatusOK, CodeMap[CodeInternalError])
 	}
 	c.JSON(http.StatusOK, CommentListResponse{
-		Response:    Response{StatusCode: 0},
+		Response: Response{
+			StatusCode: 0,
+			StatusMsg:  "获取评论成功！",
+		},
 		CommentList: comments,
 	})
 }
