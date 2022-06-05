@@ -4,7 +4,6 @@ import (
 	"douyin/dao"
 	"douyin/global"
 	"douyin/models"
-	"douyin/models"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -36,7 +35,7 @@ func FollowList(c *gin.Context) {
 			Response: Response{
 				StatusCode: 1,
 			},
-			UserList: []User{},
+			UserList: []models.User{},
 		})
 		return
 	}
@@ -49,7 +48,7 @@ func FollowList(c *gin.Context) {
 			Response: Response{
 				StatusCode: 1,
 			},
-			UserList: []User{},
+			UserList: []models.User{},
 		})
 		return
 	}
@@ -71,7 +70,7 @@ func FollowerList(c *gin.Context) {
 			Response: Response{
 				StatusCode: 1,
 			},
-			UserList: []User{},
+			UserList: []models.User{},
 		})
 		return
 	}
@@ -84,7 +83,7 @@ func FollowerList(c *gin.Context) {
 			Response: Response{
 				StatusCode: 1,
 			},
-			UserList: []User{},
+			UserList: []models.User{},
 		})
 		return
 	}
