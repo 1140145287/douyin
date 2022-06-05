@@ -14,6 +14,7 @@ const (
 	CodeEmptyAuth
 	CodePresentationError
 	CodeInvalidAuth
+	CodeInternalError
 )
 
 var CodeMap = map[ResCode]string{
@@ -26,6 +27,7 @@ var CodeMap = map[ResCode]string{
 	CodeEmptyAuth:         "请求头中auth为空",
 	CodePresentationError: "请求头中auth格式有误",
 	CodeInvalidAuth:       "无效的Token",
+	CodeInternalError:     "内部服务错误",
 }
 
 func (c ResCode) Msg() string {
