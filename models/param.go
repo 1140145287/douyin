@@ -36,11 +36,16 @@ type ParamCommentAction struct {
 	VideoId     int64  `form:"video_id" json:"video_id" binding:"required"`
 	ActionType  int8   `form:"action_type" json:"action_type" binding:"required"`
 	CommentText string `form:"comment_text" json:"comment_text"`
-	CommentId   int64  `form:"comment_id" json:"comment_id" json:"comment_id"`
+	CommentId   int64  `form:"comment_id" json:"comment_id"`
 }
 
 // ParamCommentList  用户获取评论请求列表
 type ParamCommentList struct {
 	Token   string `form:"token" json:"token" binding:"required"`
 	VideoId int64  `form:"video_id" json:"video_id" binding:"required"`
+}
+
+// ParamAuth 用户Token获取
+type ParamAuth struct {
+	Token string `form:"token" json:"token" binding:"required"`
 }
