@@ -4,6 +4,7 @@ import (
 	"douyin/dao"
 	"douyin/global"
 	"douyin/models"
+	"douyin/models"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 
 type UserListResponse struct {
 	Response
-	UserList []User `json:"user_list"`
+	UserList []models.User `json:"user_list"`
 }
 
 // RelationAction no practical effect, just check if token is valid

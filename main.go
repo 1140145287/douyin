@@ -7,7 +7,6 @@ import (
 	"douyin/pkg/setting"
 	"douyin/router"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"time"
 )

@@ -2,6 +2,7 @@ package router
 
 import (
 	"douyin/controller"
+	"douyin/handler"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,6 +10,10 @@ import (
 func NewRouter() *gin.Engine {
 	// public directory is used to serve static resources
 	r := gin.New()
+
+	//开启DEBUG日志
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 
 	r.Static("/static", "./public")
 	apiRouter := r.Group("/douyin")
@@ -18,6 +23,8 @@ func NewRouter() *gin.Engine {
 	apiRouter.POST("/user/register/", controller.Register)
 	apiRouter.POST("/user/login/", controller.Login)
 
+	//注册鉴权路由器
+	apiRouter.Use(handler.AuthHandler())
 	apiRouter.GET("/user/", controller.UserInfo)
 	apiRouter.POST("/publish/action/", controller.Publish)
 	apiRouter.GET("/publish/list/", controller.PublishList)

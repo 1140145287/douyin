@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"douyin/global"
 	"douyin/pkg/setting"
 	"fmt"
 	"time"
@@ -16,7 +15,7 @@ import (
 // var MysqlClient *gorm.DB = global.MysqlEngine
 // var RedisClient *redis.Client = global.RedisEngine
 
-// GetDBConnect get the mysql connection poll
+// NewMysqlEngine return the mysql connection connection
 func NewMysqlEngine(MysqlSetting *setting.MysqlSettingS) (*gorm.DB, error) {
 	dataSourceName := "%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local"
 	var err error
@@ -48,13 +47,12 @@ func NewMysqlEngine(MysqlSetting *setting.MysqlSettingS) (*gorm.DB, error) {
 	return db, nil
 }
 
-//redis
-// GetRedisConnect get the redis connection pool
+// NewRedisEngine return the redis connection
 func NewRedisEngine(RedisSetting *setting.RedisSettingS) (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     global.RedisSetting.Url,
-		Password: global.RedisSetting.Password,
-		DB:       global.RedisSetting.Database,
+		Addr:     RedisSetting.Url,
+		Password: RedisSetting.Password,
+		DB:       RedisSetting.Database,
 	})
 	return rdb, nil
 }

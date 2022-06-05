@@ -2,71 +2,62 @@ package controller
 
 import (
 	"douyin/global"
+	"douyin/logic"
+	"douyin/models"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"net/http"
-	"strconv"
 )
 
 type CommentListResponse struct {
 	Response
-	CommentList []Comment `json:"comment_list,omitempty"`
+	CommentList []models.Comment `json:"comment_list,omitempty"`
 }
 
 type CommentActionResponse struct {
 	Response
-	Comment Comment `json:"comment,omitempty"`
+	Comment models.Comment `json:"comment,omitempty"`
 }
 
 // CommentAction no practical effect, just check if token is valid
 func CommentAction(c *gin.Context) {
-	token := c.Query("token")
-	actionType := c.Query("action_type")
-	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
-	commentId, _ := strconv.ParseInt(c.Query("comment_id"), 10, 64)
-	if user, exist := usersLoginInfo[token]; exist {
-		comment := Comment{
-			Id:      commentId,
-			UserId:  user.Id,
-			VideoId: videoId,
-		}
-		if actionType == "1" {
-			//add the comment
-			commentText := c.Query("comment_text")
-			comment.Content = commentText
-			global.DBEngine.Create(&comment)
-			c.JSON(http.StatusOK, CommentActionResponse{Response: Response{StatusCode: 0},
-				Comment: Comment{
-					Id:         comment.Id,
-					User:       user,
-					Content:    commentText,
-					CreateDate: comment.CreatedAt.Format("01-03"),
-				}})
-		} else {
-			//delete the comment
-			global.DBEngine.Delete(&comment)
-		}
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
-
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	param := new(models.ParamCommentAction)
+	user, _ := c.Get("auth")
+	c.ShouldBindQuery(param)
+	comment, err := logic.DoComment(param)
+	if err != nil {
+		global.Logger.Error("can't create comment", zap.Error(err))
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 500,
+			StatusMsg:  CodeMap[CodeInternalError],
+		})
+		return
 	}
+	c.JSON(http.StatusOK, CommentActionResponse{
+		Response: Response{StatusCode: 0},
+		Comment: models.Comment{
+			Id:         comment.Id,
+			User:       user.(models.User),
+			Content:    comment.Content,
+			CreateDate: comment.CreatedAt.Format("01-03"),
+		}},
+	)
 }
 
-// CommentList all videos have same demo comment list
+// CommentList Get all comments
 func CommentList(c *gin.Context) {
-	token := c.Query("token")
-	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
-	var comments []Comment
-	if _, exist := usersLoginInfo[token]; exist {
-		global.DBEngine.Where("video_id = ?", videoId).Find(&comments)
-		for i := 0; i < len(comments); i++ {
-			comments[i].CreateDate = comments[i].CreatedAt.Format("01-02")
-		}
-		c.JSON(http.StatusOK, CommentListResponse{
-			Response:    Response{StatusCode: 0},
-			CommentList: comments,
+	param := new(models.ParamCommentList)
+	c.ShouldBindQuery(param)
+	comments, err := logic.GetCommentList(param)
+	if err != nil {
+		global.Logger.Error("Can't get comments ", zap.Error(err))
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 500,
+			StatusMsg:  CodeInternalError.Msg(),
 		})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
+	c.JSON(http.StatusOK, CommentListResponse{
+		Response:    Response{StatusCode: 0},
+		CommentList: comments,
+	})
 }
