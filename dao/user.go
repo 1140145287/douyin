@@ -54,3 +54,13 @@ func GetUserByID(uid int64) (*models.User, error) {
 	}
 	return user, err
 }
+
+// CheckUserExistById 根据id判断用户是否存在
+func CheckUserExistById(uid int64) error {
+	var user []models.User
+	global.MysqlEngine.Where("user_id=?", uid).Find(&user)
+	if len(user) == 0 {
+		return ErrorUserNotExit
+	}
+	return nil
+}
