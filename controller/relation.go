@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"douyin/dao"
 	"douyin/global"
+	"douyin/logic"
 	"douyin/models"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -16,13 +16,22 @@ type UserListResponse struct {
 
 // RelationAction no practical effect, just check if token is valid
 func RelationAction(c *gin.Context) {
-	token := c.Query("token")
+	//token := c.Query("token")
+	p := new(models.ParamRelationAction)
+	if err := c.ShouldBind(p); err != nil {
+		global.Logger.Error("Error in getting relation action paras", zap.Error(err))
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "parameters invalid"})
+		return
+	} // 确认参数是否正确
 
-	if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	// 获取用户id
+	uid := logic.GetUserByToken(p.Token).Id
+	if err := logic.RelationActionLogic(uid, p.ToUserId, p.ActionType); err != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "action failed"})
+		return
 	}
+	c.JSON(http.StatusOK, Response{StatusCode: 0})
+
 }
 
 // FollowList all users have same follow list
@@ -41,7 +50,7 @@ func FollowList(c *gin.Context) {
 	}
 
 	// 业务处理
-	followList, err := dao.GetFollowList(p.Uid)
+	followList, err := logic.GetFollowListLogic(p.Uid)
 	if err != nil {
 		global.Logger.Error("获取关注用户失败", zap.Error(err))
 		c.JSON(http.StatusOK, UserListResponse{
@@ -76,7 +85,7 @@ func FollowerList(c *gin.Context) {
 	}
 
 	// 业务处理
-	followerList, err := dao.GetFollowerList(p.Uid)
+	followerList, err := logic.GetFollowerListLogic(p.Uid)
 	if err != nil {
 		global.Logger.Error("获取粉丝用户失败", zap.Error(err))
 		c.JSON(http.StatusOK, UserListResponse{

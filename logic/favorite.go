@@ -32,6 +32,6 @@ func DoFavorite(param *models.ParamFavoriteAction) error {
 }
 
 // GetFavoriteList 获取感兴趣列表
-func GetFavoriteList(param *models.ParamFavoriteList) []models.Video {
+func GetFavoriteList(param *models.ParamFavoriteList) ([]models.Video, error) {
 	return dao.GetFavoriteListByUserId(param.UserId)
 }

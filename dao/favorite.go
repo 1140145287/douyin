@@ -10,10 +10,9 @@ import (
 // not exists : insert new record
 // exists 	  : update the flag
 func UpsertFavorite(favorite *models.Favorite) error {
-	err := global.MysqlEngine.Clauses(clause.OnConflict{
+	return global.MysqlEngine.Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).Create(&favorite).Error
-	return err
 }
 
 // DeleteFavorite delete the favorite record
@@ -26,11 +25,16 @@ func DeleteFavorite(favorite *models.Favorite) error {
 }
 
 // GetFavoriteListByUserId function as it's name
-func GetFavoriteListByUserId(userId int64) []models.Video {
-	var videos []models.Video
+func GetFavoriteListByUserId(userId int64) ([]models.Video, error) {
+	var videos []models.Video = nil
+	var err error = nil
 	subQuery := global.MysqlEngine.Select("video_id").Where("user_id = ?", userId).Where("is_del", 0).Table("dy_favorite")
-	if err := global.MysqlEngine.Where("video_id in (?)", subQuery).Find(&videos).Error; err != nil {
-		return nil
+	if err = global.MysqlEngine.Where("video_id in (?)", subQuery).Find(&videos).Error; err != nil {
+		return videos, err
 	}
-	return videos
+	for i := 0; i < len(videos); i++ {
+		user, _ := GetUserByID(videos[i].UserId)
+		videos[i].Author = *user
+	}
+	return videos, err
 }

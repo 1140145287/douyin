@@ -10,7 +10,3 @@ type User struct {
 	Salt          string `json:"-" gorm:"column:salt"`
 	Token         string `gorm:"-" json:"token,omitempty"`
 }
-
-func (User) TableName() string {
-	return "dy_user"
-}
