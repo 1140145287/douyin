@@ -61,10 +61,16 @@ func PublishVideo(video models.Video) error {
 
 // GetPublishListByUserId 查询用户已发布视频
 func GetPublishListByUserId(userId int64) []models.Video {
-	var videos []models.Video
+	var videos []models.Video = nil
+	//查询用户已发布视频
 	err := global.MysqlEngine.Where("user_id = ?", userId).Find(&videos).Error
 	if err != nil {
 		return nil
+	}
+	//查询视频作者信息
+	for i := 0; i < len(videos); i++ {
+		user, _ := GetUserByID(videos[i].UserId)
+		videos[i].Author = *user
 	}
 	return videos
 }
