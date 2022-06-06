@@ -36,7 +36,7 @@ type ParamCommentAction struct {
 	VideoId     int64  `form:"video_id" json:"video_id" binding:"required"`
 	ActionType  int8   `form:"action_type" json:"action_type" binding:"required"`
 	CommentText string `form:"comment_text" json:"comment_text"`
-	CommentId   int64  `form:"comment_id" json:"comment_id" json:"comment_id"`
+	CommentId   int64  `form:"comment_id" json:"comment_id"`
 }
 
 // ParamCommentList  用户获取评论请求列表
@@ -45,9 +45,15 @@ type ParamCommentList struct {
 	VideoId int64  `form:"video_id" json:"video_id" binding:"required"`
 }
 
+
 // ParamRelationAction 用户关注
 type ParamRelationAction struct {
 	Token      string `form:"token" json:"token" binding:"required"`
 	ToUserId   int64  `form:"to_user_id" json:"to_user_id" binding:"required"`
 	ActionType int8   `form:"action_type" json:"action_type" binding:"required"` // 1-关注，2-取消
+}
+
+// ParamAuth 用户Token获取
+type ParamAuth struct {
+	Token string `form:"token" json:"token" binding:"required"`
 }

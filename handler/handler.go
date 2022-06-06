@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+
+
 )
 
 /**
@@ -19,7 +21,10 @@ import (
 // AuthHandler 用户鉴权过滤器中间件
 func AuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.Query("token")
+		//参数式获取token
+		param := new(models.ParamAuth)
+		c.ShouldBind(param)
+		token := param.Token
 		if len(token) == 0 {
 			//不存在token
 			c.JSON(http.StatusOK, controller.Response{
