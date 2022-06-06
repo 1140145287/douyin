@@ -9,5 +9,5 @@ type Video struct {
 	FavoriteCount int64  `json:"favorite_count,omitempty"`
 	CommentCount  int64  `json:"comment_count,omitempty"`
 	IsFavorite    bool   `json:"is_favorite,omitempty" gorm:"-" sql:"-"`
-	Title         string `json:"title"`
+	Title         string `json:"title,omitempty"`
 }
