@@ -3,6 +3,8 @@ package dao
 import (
 	"douyin/global"
 	"douyin/models"
+
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -38,4 +40,13 @@ func UpdateVideoComment(comment *models.Comment) error {
 		return err
 	}
 	return nil
+}
+
+// GetVideoList 获取视频列表, 用于feed接口
+func GetVideoList() (videoList []models.Video, err error) {
+	err = global.MysqlEngine.Order("create_date desc").Limit(30).Find(&videoList).Error
+	if err != nil {
+		global.Logger.Warn("GetVideoList Failed!", zap.Error(err))
+	}
+	return
 }

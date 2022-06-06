@@ -7,10 +7,11 @@ import (
 	"douyin/models"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 /**
@@ -20,7 +21,9 @@ import (
 // AuthHandler 用户鉴权过滤器中间件
 func AuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.Query("token")
+		param := new(models.ParamAuth)
+		c.ShouldBind(param)
+		token := param.Token
 		if len(token) == 0 {
 			//不存在token
 			c.JSON(http.StatusOK, controller.Response{
