@@ -5,11 +5,10 @@ import (
 	"douyin/global"
 	"douyin/models"
 	"fmt"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"os/exec"
 	"path/filepath"
-	"strings"
 )
 
 func DoPublish(param *models.ParamPublishAction, c *gin.Context) error {
@@ -20,25 +19,22 @@ func DoPublish(param *models.ParamPublishAction, c *gin.Context) error {
 		return err
 	}
 
-	//保存视频至public文件夹(这块不用了)
-	filename := filepath.Base(data.Filename)                  //a.mp4
-	videoName := fmt.Sprintf("video_%d_%s", userId, filename) //video_user_a.mp4
-	coverName := fmt.Sprintf("cover_%d_%s", userId, filename) //cover_user_a.mp4
-	coverName = strings.Split(coverName, ".")[0] + ".jpg"
-	videoUrl := filepath.Join("./public/", videoName) //video路径
-	coverUrl := filepath.Join("./public/", coverName) //cover路径
-	if err := c.SaveUploadedFile(data, videoUrl); err != nil {
+	//上传视频到阿里云，封面截取
+	filename := filepath.Base(data.Filename)
+	videoName := fmt.Sprintf("%d_%s", userId, filename)         //video命名
+	videoPath := filepath.Join("./public/", videoName)          //video的public路径
+	if err := c.SaveUploadedFile(data, videoPath); err != nil { //先上传到public文件夹
 		return err
 	}
-	GetCoverFromVideo(videoUrl, coverUrl, 1) //获取视频封面
-
-	//上传视频到阿里云，封面截取(待更新)
-
+	videoUrl, coverUrl, err := SaveVideoToOSS(videoName) //再上传到OSS
+	if err != nil {
+		return err
+	}
 	//video及cover路径存入视频列表
 	video := models.Video{
 		UserId:   userId,
 		PlayUrl:  videoUrl,
-		CoverUrl: coverUrl, //封面地址待确认
+		CoverUrl: coverUrl,
 		Title:    param.Title,
 	}
 	err = global.MysqlEngine.Transaction(func(tx *gorm.DB) error {
@@ -54,15 +50,32 @@ func GetPublishList(param *models.ParamPublishList) []models.Video {
 	return dao.GetPublishListByUserId(param.UserId)
 }
 
-//GetCoverFromVideo 获取视频帧
-func GetCoverFromVideo(videoUrl string, coverUrl string, frameNum int) {
-	dirAbs, _ := filepath.Abs("./")
-	videoAbsUrl := dirAbs + "\\" + videoUrl
-	coverAbsUrl := dirAbs + "\\" + coverUrl
-	cmdArgs := []string{"-i", videoAbsUrl, "-y", "-f", "image2", "-ss", fmt.Sprint(frameNum), coverAbsUrl}
-	cmd := exec.Command(dirAbs+"\\pkg\\ffmpeg", cmdArgs...)
-	err := cmd.Run()
+func SaveVideoToOSS(videoName string) (videoUrl string, coverUrl string, err error) {
+	// Endpoint以杭州为例，其它Region请按实际情况填写。
+	endpoint := "https://oss-accelerate.aliyuncs.com"
+	accessKeyId := "LTAI4FysLakF4dQbPPJakWia"
+	accessKeySecret := "TbSZ2mcpDLYvDocbd5s949MThLcUYX"
+	bucketName := "kauizhaotan"
+	//上传路径
+	targetPath := "douyin/video/"
+	// 创建OSSClient实例
+	client, err := oss.New(endpoint, accessKeyId, accessKeySecret)
 	if err != nil {
-		return
+		return "", "", err
 	}
+	// 使用 特定的 bucket
+	bucket, err := client.Bucket(bucketName)
+	if err != nil {
+		return "", "", err
+	}
+	//上传 参数1为上传地址 参数2为本地文件地址
+	err = bucket.PutObjectFromFile(targetPath+videoName, "public/"+videoName)
+	if err != nil {
+		return "", "", err
+	}
+	//回传视频和封面地址
+	videoUrl = fmt.Sprintf("https://kauizhaotan.oss-cn-shanghai.aliyuncs.com/%s%s", targetPath, videoName)
+	coverUrl = fmt.Sprintf("https://kauizhaotan.oss-cn-shanghai.aliyuncs.com/%s%s"+
+		"?x-oss-process=video/snapshot,t_5000,m_fast", targetPath, videoName)
+	return videoUrl, coverUrl, nil
 }
