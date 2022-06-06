@@ -1,4 +1,4 @@
-package handler
+package middleware
 
 import (
 	"context"
@@ -8,10 +8,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"net/http"
 	"time"
-
-
 )
 
 /**
@@ -21,10 +20,7 @@ import (
 // AuthHandler 用户鉴权过滤器中间件
 func AuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//参数式获取token
-		param := new(models.ParamAuth)
-		c.ShouldBind(param)
-		token := param.Token
+		token := c.Query("token")
 		if len(token) == 0 {
 			//不存在token
 			c.JSON(http.StatusOK, controller.Response{
@@ -43,7 +39,10 @@ func AuthHandler() gin.HandlerFunc {
 				_, exists := c.Get("auth")
 				if !exists {
 					authUser := models.User{}
-					json.Unmarshal([]byte(userJson), &authUser)
+					if err := json.Unmarshal([]byte(userJson), &authUser); err != nil {
+						global.Logger.Error("unmarshal wrong", zap.Error(err))
+						c.Abort()
+					}
 					c.Set("auth", authUser)
 				}
 				fmt.Println("用户请求已放行！")

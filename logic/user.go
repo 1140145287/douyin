@@ -30,6 +30,11 @@ func Register(p *models.ParamRegister) (*models.User, error) {
 	// 5、有要求说返回token,所以我们要返回token
 	token, err := jwt.GetToken(user.Id, user.Name)
 	user.Token = token
+	// 6、将token加入redis中，过期时间是24小时, 键是token, 值是用户对象
+	userJson, _ := json.Marshal(*user)
+	if err = global.RedisEngine.Set(context.Background(), global.TokenPrefix+token, userJson, 24*time.Hour).Err(); err != nil {
+		global.Logger.Error("缓存用户时出错出错！")
+	}
 	return user, err
 }
 
@@ -50,8 +55,7 @@ func Login(p *models.ParamLogin) (*models.User, error) {
 
 	//将token加入redis中，过期时间是24小时, 键是token, 值是用户对象
 	userJson, _ := json.Marshal(*user)
-	err = global.RedisEngine.Set(context.Background(), global.TokenPrefix+token, userJson, 24*time.Hour).Err()
-	if err != nil {
+	if err = global.RedisEngine.Set(context.Background(), global.TokenPrefix+token, userJson, 24*time.Hour).Err(); err != nil {
 		global.Logger.Error("缓存用户时出错出错！")
 	}
 	return user, err
@@ -82,6 +86,7 @@ func UserInfo(param *models.ParamInfo) (*models.User, error) {
 //}
 
 // GetUserByToken 通过token获取对象
+// token : 用户token值
 func GetUserByToken(token string) *models.User {
 	var user = models.User{}
 	userJson, _ := global.RedisEngine.Get(global.Ctx, global.TokenPrefix+token).Result()
