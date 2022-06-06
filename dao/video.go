@@ -44,7 +44,7 @@ func UpdateVideoComment(comment *models.Comment) error {
 
 // GetVideoList 获取视频列表, 用于feed接口
 func GetVideoList() (videoList []models.Video, err error) {
-	err = global.MysqlEngine.Find(&videoList).Limit(30).Error
+	err = global.MysqlEngine.Order("create_date desc").Limit(30).Find(&videoList).Error
 	if err != nil {
 		global.Logger.Warn("GetVideoList Failed!", zap.Error(err))
 	}
