@@ -36,5 +36,13 @@ log:
   max_age : 60  #存放时间
   max_backups: 5 #最大的备份数
 
+#OSS配置
+oss:
+  endpoint: https://oss-accelerate.aliyuncs.com
+  accessKeyId: LTAI4FysLakF4dQbPPJakWia
+  accessKeySecret: TbSZ2mcpDLYvDocbd5s949MThLcUYX
+  bucketName: kauizhaotan
+  targetPath: douyin/video/
+  targetUrl: https://kauizhaotan.oss-accelerate.aliyuncs.com #配置回传视频地址前缀
 
 
