@@ -37,7 +37,7 @@ log:
 oss:
   endpoint: https://oss-accelerate.aliyuncs.com
   accessKeyId: LTAI4FysLakF4dQbPPJakWia
-  accessKeySecret: TbSZ2mcpDLYvDocbd5s949MThLcUYX
+  accessKeySecret: TcSZ2mfpDLYvDofcd5s949MThLfUYX
   bucketName: kauizhaotan
   targetPath: douyin/video/
   targetUrl: https://kauizhaotan.oss-accelerate.aliyuncs.com #配置回传视频地址前缀
