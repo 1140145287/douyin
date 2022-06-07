@@ -3,8 +3,6 @@ package dao
 import (
 	"douyin/global"
 	"douyin/models"
-	"encoding/json"
-	"time"
 
 	"go.uber.org/zap"
 )
@@ -48,26 +46,32 @@ func Login(p *models.User) error {
 
 // GetUserByID 根据作者的ID号得到作者信息
 func GetUserByID(uid int64) (*models.User, error) {
-
-	var user *models.User
-	var err error
-	// 从缓存查找
-	userJson, _ := global.RedisEngine.Get(global.Ctx, global.UserPrefix+string(uid)).Result()
-	if len(userJson) == 0 {
-		//不存在,从数据库里面查找
-		err := global.MysqlEngine.Where("user_id = ?", uid).Find(user).Error
-		if err != nil {
-			global.Logger.Warn("GetUserByID Failed!", zap.Int64("uid:", uid), zap.Error(err))
-			err = ErrorInvalidID
-		}
-		userJson, _ := json.Marshal(*user)
-		global.RedisEngine.Set(global.Ctx, global.UserPrefix+string(uid), userJson, 24*time.Hour)
-	} else {
-		//存在
-		user = &models.User{}
-		json.Unmarshal([]byte(userJson), user)
+	user := new(models.User)
+	err := global.MysqlEngine.Where("user_id = ?", uid).Find(user).Error
+	if err != nil {
+		global.Logger.Warn("GetUserByID Failed!", zap.Int64("uid:", uid), zap.Error(err))
+		err = ErrorInvalidID
 	}
 	return user, err
+	// var user *models.User
+	// var err error
+	// // 从缓存查找
+	// userJson, _ := global.RedisEngine.Get(global.Ctx, global.UserPrefix+strconv.FormatInt(uid, 10)).Result()
+	// if len(userJson) == 0 {
+	// 	//不存在,从数据库里面查找
+	// 	err := global.MysqlEngine.Where("user_id = ?", uid).Find(user).Error
+	// 	if err != nil {
+	// 		global.Logger.Error("GetUserByID Failed!", zap.Int64("uid:", uid), zap.Error(err))
+	// 		err = ErrorInvalidID
+	// 	}
+	// 	userJson, _ := json.Marshal(*user)
+	// 	global.RedisEngine.Set(global.Ctx, global.UserPrefix+strconv.FormatInt(uid, 10), userJson, 24*time.Hour)
+	// } else {
+	// 	//存在
+	// 	user = &models.User{}
+	// 	json.Unmarshal([]byte(userJson), user)
+	// }
+	// return user, err
 }
 
 // CheckUserExistById 根据id判断用户是否存在

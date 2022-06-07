@@ -2,6 +2,13 @@
 
 ## 4399　菜鸟驿站队
 
+### 项目启动方式
++ 登录方式 : 81.68.239.206:8080 导入到apk中
+
+```shell
+go run main.go
+```
+
 底层服务：mysql、Redis<br>
 ORM框架：Gorm、Gorm拓展soft-delete<br>
 HTTP框架：Gin、Gin拓展Gin-Jwt<br>
@@ -17,13 +24,12 @@ HTTP框架：Gin、Gin拓展Gin-Jwt<br>
 >logic　存放实际业务逻辑<br>
 >models　存放数据库结构体<br>
 >pkg　项目相关模块包<br>
+>
 >>middleware　存放拦截器等中间件<br>
 >>jwt　鉴权模块<br>
 >>seting　全局信息相关<br>
+>
 >public　暂时存放视频，随后视频会自动传送到aliyun-oss<br>
 >router　存放路由器<br>
 >storage　项目生成的临时文件<br>
 
-### 项目文档地址
-
-https://bytedancecampus1.feishu.cn/docs/doccndqOddWdeOdGb1sTqcDQxLf#TO4ZzD

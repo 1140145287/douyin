@@ -6,11 +6,12 @@ import (
 	"douyin/global"
 	"douyin/models"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func DoPublish(param *models.ParamPublishAction, c *gin.Context) error {
@@ -73,6 +74,6 @@ func SaveVideoToOSS(videoName string, data []byte) (videoUrl string, coverUrl st
 	//回传视频和封面地址
 	videoUrl = fmt.Sprintf("%s/%s%s", global.OSSetting.TargetURL, global.OSSetting.TargetPath, videoName)
 	coverUrl = fmt.Sprintf("https://kauizhaotan.oss-cn-shanghai.aliyuncs.com/%s%s"+
-		"?x-oss-process=video/snapshot,t_5000,m_fast", global.OSSetting.TargetPath, videoName)
+		"?x-oss-process=video/snapshot,t_500,m_fast", global.OSSetting.TargetPath, videoName)
 	return videoUrl, coverUrl, nil
 }

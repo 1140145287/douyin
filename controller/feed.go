@@ -19,8 +19,11 @@ type FeedResponse struct {
 
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
+	param := new(models.ParamAuth)
+	c.ShouldBind(param)
+	token := param.Token
 	//处理业务逻辑
-	videoList, err := logic.GetVideoList()
+	videoList, err := logic.GetVideoList(token)
 	if err != nil {
 		global.Logger.Error("videoList not exit", zap.Error(err))
 		c.JSON(http.StatusBadRequest, FeedResponse{
@@ -28,16 +31,6 @@ func Feed(c *gin.Context) {
 			NextTime: time.Now().Unix(),
 		})
 	}
-	//TODO:如果用户存在Token，那么需要设置是否喜欢状态。也就是需要设置 is_favorite字段
-	//token := c.Query("token")
-	//if len(token) != 0 {
-	//	//存在token且未过期，用户处在登陆状态
-	//	if logic.ExistsKey(global.TokenPrefix + token){
-	//
-	//	}
-	//
-	//}
-	//返回响应
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
 		VideoList: videoList,
