@@ -3,6 +3,7 @@ package dao
 import (
 	"douyin/pkg/setting"
 	"fmt"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -55,4 +56,19 @@ func NewRedisEngine(RedisSetting *setting.RedisSettingS) (*redis.Client, error) 
 		DB:       RedisSetting.Database,
 	})
 	return rdb, nil
+}
+
+// NewOSSEngine return the oss connection
+func NewOSSEngine(OSSettings *setting.OSSettingS) (*oss.Bucket, error) {
+	// 创建OSSClient实例
+	client, err := oss.New(OSSettings.Endpoint, OSSettings.AccessKeyId, OSSettings.AccessKeySecret)
+	if err != nil {
+		return nil, err
+	}
+	// 使用 特定的 bucket
+	bucket, err := client.Bucket(OSSettings.BucketName)
+	if err != nil {
+		return nil, err
+	}
+	return bucket, nil
 }

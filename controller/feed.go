@@ -28,6 +28,15 @@ func Feed(c *gin.Context) {
 			NextTime: time.Now().Unix(),
 		})
 	}
+	//TODO:如果用户存在Token，那么需要设置是否喜欢状态。也就是需要设置 is_favorite字段
+	//token := c.Query("token")
+	//if len(token) != 0 {
+	//	//存在token且未过期，用户处在登陆状态
+	//	if logic.ExistsKey(global.TokenPrefix + token){
+	//
+	//	}
+	//
+	//}
 	//返回响应
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
