@@ -1,12 +1,9 @@
 #mysql连接配置
 mysql:
   DBType: mysql
-  Username: douyin  # 填写你的数据库账号
-  Password: abc123456+  # 填写你的数据库密码
-  Host: 81.68.239.206:3306
-  #Username: root
-  #Password: 123
-  #Host: 127.0.0.1:3306
+  Username: root
+  Password: 123
+  Host: 127.0.0.1:3306
   DBName: douyin
   TablePrefix: dy_
   Charset: utf8

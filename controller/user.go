@@ -14,19 +14,6 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// usersLoginInfo use map to store user info, and key is username+password for demo
-// user data will be cleared every time the server starts
-// test data: username=zhanglei, password=douyin
-var usersLoginInfo = map[string]models.User{
-	"zhangleidouyin": {
-		Id:            1,
-		Name:          "zhanglei",
-		FollowCount:   10,
-		FollowerCount: 5,
-		IsFollow:      true,
-	},
-}
-
 type UserLoginResponse struct {
 	Response
 	UserId int64  `json:"user_id,omitempty"`
@@ -38,30 +25,8 @@ type UserResponse struct {
 	User *models.User `json:"user"`
 }
 
+// Register register a new user
 func Register(c *gin.Context) {
-	// username := c.Query("username")
-	// password := c.Query("password")
-
-	// token := username + password
-
-	// if _, exist := usersLoginInfo[token]; exist {
-	// 	c.JSON(http.StatusOK, UserLoginResponse{
-	// 		Response: Response{StatusCode: 1, StatusMsg: "User already exist"},
-	// 	})
-	// } else {
-	// 	atomic.AddInt64(&userIdSequence, 1)
-	// 	newUser := User{
-	// 		Id:   userIdSequence,
-	// 		Name: username,
-	// 	}
-	// 	usersLoginInfo[token] = newUser
-	// 	c.JSON(http.StatusOK, UserLoginResponse{
-	// 		Response: Response{StatusCode: 0},
-	// 		UserId:   userIdSequence,
-	// 		Token:    username + password,
-	// 	})
-	// }
-
 	//1、获取参数以及参数校验
 	p := new(models.ParamRegister)
 	if err := c.ShouldBind(p); err != nil {
@@ -100,25 +65,8 @@ func Register(c *gin.Context) {
 	})
 }
 
+// Login
 func Login(c *gin.Context) {
-	// username := c.Query("username")
-	// password := c.Query("password")
-
-	// token := username + password
-
-	// if user, exist := usersLoginInfo[token]; exist {
-	// 	c.JSON(http.StatusOK, UserLoginResponse{
-	// 		Response: Response{StatusCode: 0},
-	// 		UserId:   user.Id,
-	// 		Token:    token,
-	// 	})
-	// } else {
-	// 	c.JSON(http.StatusOK, UserLoginResponse{
-	// 		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-	// 	})
-	// }
-
-	//1、获取请求参数以及参数校验
 	p := new(models.ParamLogin)
 	if err := c.ShouldBind(p); err != nil {
 		//请求参数有误
@@ -161,17 +109,8 @@ func Login(c *gin.Context) {
 	})
 }
 
+// UserInfo get user info
 func UserInfo(c *gin.Context) {
-	// if user, exist := usersLoginInfo[token]; exist {
-	// 	c.JSON(http.StatusOK, UserResponse{
-	// 		Response: Response{StatusCode: 0},
-	// 		User:     user,
-	// 	})
-	// } else {
-	// 	c.JSON(http.StatusOK, UserResponse{
-	// 		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-	// 	})
-	// }
 	//1、参数校验
 	p := new(models.ParamInfo)
 	if err := c.ShouldBindQuery(p); err != nil {

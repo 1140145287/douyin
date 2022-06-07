@@ -56,7 +56,7 @@ type ParamRelationAction struct {
 
 // ParamAuth 用户Token获取
 type ParamAuth struct {
-	Token string `form:"token" json:"token" binding:"required"`
+	Token string `form:"token" json:"token"`
 }
 
 // ParamPublishAction  用户上传视频请求
