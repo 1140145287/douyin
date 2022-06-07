@@ -1,5 +1,7 @@
 package models
 
+import "mime/multipart"
+
 type ParamRegister struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required,min=5,max=12"`
@@ -45,7 +47,6 @@ type ParamCommentList struct {
 	VideoId int64  `form:"video_id" json:"video_id" binding:"required"`
 }
 
-
 // ParamRelationAction 用户关注
 type ParamRelationAction struct {
 	Token      string `form:"token" json:"token" binding:"required"`
@@ -56,4 +57,17 @@ type ParamRelationAction struct {
 // ParamAuth 用户Token获取
 type ParamAuth struct {
 	Token string `form:"token" json:"token" binding:"required"`
+}
+
+// ParamPublishAction  用户上传视频请求
+type ParamPublishAction struct {
+	Token string               `form:"token" json:"token" binding:"required"`
+	Data  multipart.FileHeader `form:"data" json:"data" binding:"required"`
+	Title string               `form:"title" json:"title" binding:"required"`
+}
+
+// ParamPublishList  用户发布视频列表
+type ParamPublishList struct {
+	Token  string `form:"token" json:"token" binding:"required"`
+	UserId int64  `form:"user_id" json:"user_id" binding:"required"`
 }

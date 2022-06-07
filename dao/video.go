@@ -3,6 +3,7 @@ package dao
 import (
 	"douyin/global"
 	"douyin/models"
+	"gorm.io/gorm/clause"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -49,4 +50,27 @@ func GetVideoList() (videoList []models.Video, err error) {
 		global.Logger.Warn("GetVideoList Failed!", zap.Error(err))
 	}
 	return
+}
+
+// PublishVideo 将视频和封面链接保存于数据库
+func PublishVideo(video models.Video) error {
+	return global.MysqlEngine.Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&video).Error
+}
+
+// GetPublishListByUserId 查询用户已发布视频
+func GetPublishListByUserId(userId int64) []models.Video {
+	var videos []models.Video = nil
+	//查询用户已发布视频
+	err := global.MysqlEngine.Where("user_id = ?", userId).Find(&videos).Error
+	if err != nil {
+		return nil
+	}
+	//查询视频作者信息
+	for i := 0; i < len(videos); i++ {
+		user, _ := GetUserByID(videos[i].UserId)
+		videos[i].Author = *user
+	}
+	return videos
 }
