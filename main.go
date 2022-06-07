@@ -24,6 +24,10 @@ func init() {
 	if err != nil {
 		log.Fatalf("init.setupRedisEngine err: %v", err)
 	}
+	err = setupOSSEngine()
+	if err != nil {
+		log.Fatalf("init.setupOSSEngine err: %v", err)
+	}
 	err = setupLogger()
 	if err != nil {
 		log.Fatalf("init.setupLogger err: %v", err)
@@ -70,6 +74,16 @@ func setupRedisEngine() error {
 	return nil
 }
 
+//初始化OSS配置
+func setupOSSEngine() error {
+	var err error
+	global.OSSEngine, err = dao.NewOSSEngine(global.OSSetting)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //初始化日志配置
 func setupLogger() error {
 	var err error
@@ -99,6 +113,10 @@ func setupSetting() error {
 		return err
 	}
 	err = setting.ReadSection("log", &global.LoggerSetting)
+	if err != nil {
+		return err
+	}
+	err = setting.ReadSection("oss", &global.OSSetting)
 	if err != nil {
 		return err
 	}

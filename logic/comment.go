@@ -37,5 +37,10 @@ func DoComment(param *models.ParamCommentAction) (models.Comment, error) {
 
 // GetCommentList 获取视频评论列表
 func GetCommentList(param *models.ParamCommentList) ([]models.Comment, error) {
-	return dao.GetCommentsByVideoId(param.VideoId)
+	comments, err := dao.GetCommentsByVideoId(param.VideoId)
+	for i := 0; i < len(comments); i++ {
+		user, _ := dao.GetUserByID(comments[i].UserId)
+		comments[i].User = *user
+	}
+	return comments, err
 }

@@ -36,6 +36,15 @@ type LoggerSettingS struct {
 	LogMaxBackups int    `mapstructure:"max_backups"`
 }
 
+type OSSettingS struct {
+	Endpoint        string `mapstructure:"endpoint"`
+	AccessKeyId     string `mapstructure:"accessKeyId"`
+	AccessKeySecret string `mapstructure:"accessKeySecret"`
+	BucketName      string `mapstructure:"bucketName"`
+	TargetPath      string `mapstructure:"targetPath"`
+	TargetURL       string `mapstructure:"targetUrl"`
+}
+
 func (s *Setting) ReadSection(k string, v interface{}) error {
 	err := s.vp.UnmarshalKey(k, v)
 	if err != nil {

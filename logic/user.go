@@ -96,3 +96,11 @@ func GetUserByToken(token string) *models.User {
 	}
 	return &user
 }
+
+func ExistsKey(token string) bool {
+	exists, _ := global.RedisEngine.Exists(global.Ctx, token).Result()
+	if exists > 0 {
+		return true
+	}
+	return false
+}
