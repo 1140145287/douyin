@@ -53,25 +53,6 @@ func GetUserByID(uid int64) (*models.User, error) {
 		err = ErrorInvalidID
 	}
 	return user, err
-	// var user *models.User
-	// var err error
-	// // 从缓存查找
-	// userJson, _ := global.RedisEngine.Get(global.Ctx, global.UserPrefix+strconv.FormatInt(uid, 10)).Result()
-	// if len(userJson) == 0 {
-	// 	//不存在,从数据库里面查找
-	// 	err := global.MysqlEngine.Where("user_id = ?", uid).Find(user).Error
-	// 	if err != nil {
-	// 		global.Logger.Error("GetUserByID Failed!", zap.Int64("uid:", uid), zap.Error(err))
-	// 		err = ErrorInvalidID
-	// 	}
-	// 	userJson, _ := json.Marshal(*user)
-	// 	global.RedisEngine.Set(global.Ctx, global.UserPrefix+strconv.FormatInt(uid, 10), userJson, 24*time.Hour)
-	// } else {
-	// 	//存在
-	// 	user = &models.User{}
-	// 	json.Unmarshal([]byte(userJson), user)
-	// }
-	// return user, err
 }
 
 // CheckUserExistById 根据id判断用户是否存在
