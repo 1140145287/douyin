@@ -2,8 +2,6 @@ package controller
 
 type ResCode int64
 
-const CtxUserIdKey = "user_id"
-
 const (
 	CodeSuccess ResCode = 1000 + iota
 	CodeInvalidParam

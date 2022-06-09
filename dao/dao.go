@@ -13,8 +13,6 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-// var MysqlClient *gorm.DB = global.MysqlEngine
-// var RedisClient *redis.Client = global.RedisEngine
 
 // NewMysqlEngine return the mysql connection connection
 func NewMysqlEngine(MysqlSetting *setting.MysqlSettingS) (*gorm.DB, error) {
